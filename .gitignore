@@ -1,0 +1,14 @@
+*.pdf
+*.
+Debug
+.vs
+*.asmproj
+*.atsln
+*.xml
+.vscode
+*.pptx
+*.docx
+*.txt
+*.cproj
+*.jpeg
+*.jpg
