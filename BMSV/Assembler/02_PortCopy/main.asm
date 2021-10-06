@@ -27,8 +27,13 @@ start:
 
 loop:
     
+	; Zustand von PINA in r16 laden
     in r16, PINA
+	; r16 (PINA) auf PORTB ausgeben
     out PORTB, r16
-    out PORTB, r17
+	; Einen Takt warten / Nichts tun
+ 	NOP
+	; Toggeln von PORTB durch laden von r17 (0xFF) nach PINB
+    out PINB, r17
 
     rjmp loop
