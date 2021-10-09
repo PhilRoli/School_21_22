@@ -14,3 +14,5 @@ Debug
 *.jpg
 *.xlsx
 gmr_pc.exe
+*.pro
+*.pro.user
