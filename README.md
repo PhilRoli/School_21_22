@@ -17,3 +17,7 @@ I'm a student at the [HTL-Salzburg for Biomedical Engineering](http://www.htl-sa
 - [Labor](https://github.com/PhilRoli/School_21_22/tree/master/Labor) : Laboratory consists of 3 subjects: Chemistry, Microcontrollers and Sensors.
 
 - [MGIN](https://github.com/PhilRoli/School_21_22/tree/master/MGIN) : MGIN is our Computer science class, wehre we will mostly be working in C / C++. Most programms we be found here.
+
+## Previous Year
+
+[**My Previous Year can be found here**](https://github.com/PhilRoli/School20-21)
