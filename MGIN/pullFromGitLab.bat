@@ -1,5 +1,5 @@
 @echo off
 
-cd C:\VSC_School20-21\GitRepoTest
+cd D:\Schul_Dokumente\4AHBG\MGIN
 
 git pull gitlab main
