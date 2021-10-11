@@ -25,15 +25,17 @@ start:
 	rjmp loop
 
 loop:
-	; Read PINB to PORTB
+	; Read PINB to r18
 	in r18, PINB
 	; Wait
 	NOP
 	; Add Birthday
+	; add <ziel>, <quelle>
+	; quelle wird yu ziel addiert
 	add r18, r27
 	; Wait
 	NOP
-	; Output to PORTA
+	; Output r18 to PORTA
 	out PORTA, r18
 
 	rjmp loop
