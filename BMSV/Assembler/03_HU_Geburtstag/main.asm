@@ -27,13 +27,13 @@ start:
 loop:
 	; Read PINB to r18
 	in r18, PINB
-	; Wait
+	; Do nothing for 1 cycle
 	NOP
 	; Add Birthday
 	; add <ziel>, <quelle>
 	; quelle wird yu ziel addiert
 	add r18, r27
-	; Wait
+	; Do nothing for 1 cycle
 	NOP
 	; Output r18 to PORTA
 	out PORTA, r18
