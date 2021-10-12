@@ -1,6 +1,6 @@
 # School_21_22
 
-[![GitHub last commit](https://img.shields.io/github/last-commit/philroli/School_21_22)](https://github.com/PhilRoli/School20-21/pulls) ![GitHub repo size](https://img.shields.io/github/repo-size/philroli/School_21_22)
+[![GitHub last commit](https://img.shields.io/github/last-commit/philroli/School_21_22)](https://github.com/PhilRoli/School_21_22/commits/master/) ![GitHub repo size](https://img.shields.io/github/repo-size/philroli/School_21_22)
 
 ## Context
 
