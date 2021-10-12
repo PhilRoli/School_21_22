@@ -22,6 +22,8 @@ int main(void)
 {
 	// Output to portB
     DDRB = 0xFF;
+	
+	PORTD |= ( 1 << 2 );
 
     // Set interrupt to trigger on negative flank
     EICRA |= 0x02;
@@ -39,7 +41,9 @@ int main(void)
 
 ISR (INT0_vect) 
 {
-    _delay_ms(10);
+    _delay_ms(100);
     intCounter++;
+	// Löschen aller interupts die im zeitraum des delays aufgekommen sind
+	EIFR &= ~(1<< INTF0);
 }
 
