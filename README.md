@@ -16,9 +16,9 @@ I'm a student at the [HTL-Salzburg for Biomedical Engineering](http://www.htl-sa
 
 - [BMSV](https://github.com/PhilRoli/School_21_22/tree/master/BMSV) : Biomedical Signal Processing focuses primarily on Microcontroller this year, so the languages are going to be primarily C / C++ or Assembly.
 
-- [Labor](https://github.com/PhilRoli/School_21_22/tree/master/Labor) : Laboratory consists of 3 subjects: Chemistry, Microcontrollers and Sensors.
+- [Labor](https://github.com/PhilRoli/School_21_22/tree/master/Labor) : Laboratory consists of 3 subjects: Chemistry, Microcontrollers and Sensors. Most programms will be in C and from the Microcontroller part.
 
-- [MGIN](https://github.com/PhilRoli/School_21_22/tree/master/MGIN) : MGIN is our Computer science class, wehre we will mostly be working in C / C++. Most programms we be found here.
+- [MGIN](https://github.com/PhilRoli/School_21_22/tree/master/MGIN) : MGIN is our Computer science class, where we will mostly be working in C / C++. Most programms can be found here.
 
 ## Previous Year
 
