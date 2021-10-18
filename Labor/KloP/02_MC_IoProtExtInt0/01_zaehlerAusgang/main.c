@@ -30,26 +30,42 @@ int main(void)
     /* Replace with your application code */
     while (1) 
     {
+        // Input am PINA an den ersten Bit shiften
+        //und dann maskieren
         input = (PINA >> 6) & INPUT_MASK;
 
+        // Solange der draht nicht auf GND steckt, hochzählen
         while (input == 1) {
+            // Ausgeben des wertes an die 8 LEDs
 			PORTB = outputwert;
+            // Erhöhen des Zähler Wertes
             outputwert++;
+            // Overflow da maximum 28 angezeigt werden darf
             if (outputwert == 29)
             {
                 outputwert = 0;
             }
+            // Warten
 			_delay_ms(150);
+            // Neues einlesen des Inputs ob die Richtung
+            // geändert werden muss
 			input = (PINA >> 6) & INPUT_MASK;
         }
+        // Wenn der Draht auf GND steckt, runterzählen
         while (input == 0) {
+            // Ausgeben des wertes an die 8 LEDs
 			PORTB = outputwert;
+            // Verringern des Zähler Wertes
             outputwert--;
+            // Underflow da maximal 0
             if (outputwert > 28)
             {
                 outputwert = 28;
             }
+            // Warten
 			_delay_ms(150);
+            // Neues einlesen des Inputs ob die Richtung
+            // geändert werden muss 
 			input = (PINA >> 6) & INPUT_MASK;
         }
         

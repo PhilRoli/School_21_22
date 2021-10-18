@@ -22,7 +22,7 @@ int main(void)
 {
 	// Output to portB
     DDRB = 0xFF;
-	
+	// Input aktivieren
 	PORTD |= ( 1 << 2 );
 
     // Set interrupt to trigger on negative flank
@@ -31,10 +31,11 @@ int main(void)
     EIMSK |= (1 << INT0);
     // Enable all interrupts
     sei();
-
     /* Replace with your application code */
     while (1) 
     {
+        // Dauerhaftes ausgeben des Zähler Werts am PORTB
+        // Erhöhen nur durch Interrupts
         PORTB = intCounter;
     }
 }
@@ -43,7 +44,7 @@ ISR (INT0_vect)
 {
     _delay_ms(100);
     intCounter++;
-	// L�schen aller interupts die im zeitraum des delays aufgekommen sind
+	// Löschen aller interupts die im zeitraum des delays aufgekommen sind
 	EIFR &= ~(1<< INTF0);
 }
 

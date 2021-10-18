@@ -5,21 +5,21 @@
 ; Author : philipp
 ; Class  : 4AHBG
 ; Description:
-; Read PINB to PORTB
+; Read PINB to r18
 ; Add Birthday (27)
-; Output to PORTA
+; Output to PORTD
 ;
 
 
 ; Replace with your application code
 start:
-; Input
+	; Input
 	ldi r16, 0x00
 	out DDRB, r16
-; Output
+	; Output
 	ldi r17, 0xFF
-	out DDRA, r17
-; load birtday (27) to r27
+	out DDRD, r17
+	; load birtday (27) to r27
 	ldi r27, 0x1B
 
 	rjmp loop
@@ -35,7 +35,7 @@ loop:
 	add r18, r27
 	; Do nothing for 1 cycle
 	NOP
-	; Output r18 to PORTA
-	out PORTA, r18
+	; Output r18 to PORTD
+	out PORTD, r18
 
 	rjmp loop
