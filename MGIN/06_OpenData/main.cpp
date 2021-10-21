@@ -2,16 +2,14 @@
 #include <QFile>
 #include <QString>
 
-int main(int argc, char *argv[])
+void parkGetKonv(QString link, QString fileName)
 {
-  QCoreApplication a(argc, argv);
-
   QFile csvfile("D://Schul_Dokumente//4AHBG//MGIN//06_OpenData//Parkautomaten.csv");
   csvfile.open(QIODevice::ReadOnly);
 
   QFile textfile("D://Schul_Dokumente//4AHBG//MGIN//06_OpenData//Parkautomaten.txt");
   textfile.open(QIODevice::WriteOnly);
-  textfile.write("lat             lon            title           description     icon    iconSize    iconOffset");
+  textfile.write("lat\tlon\ttitle\tdescription\ticon\ticonSize\ticonOffset");
   textfile.write("\n");
 
   csvfile.readLine();
@@ -27,13 +25,32 @@ int main(int argc, char *argv[])
     QString adress = strList[1];
     QString number = "Automat #" + strList[0];
 
-    QString finishLine = lat + "\t" + lon + "\t" + number + "\t" + adress + "tOl_icon_blue_example.png\t24,24\t0,-24" + "\n";
+    QString finishLine = lat + "\t" + lon + "\t" + number + "\t" + adress + "\tparking.png\t24,24\t0,-24" + "\n";
 
     textfile.write(finishLine.toStdString().c_str());
   }
 
   csvfile.close();
   textfile.close();
+}
+
+void wlanGetKonv(QString link, QString fileName)
+{
+  return;
+}
+
+int main(int argc, char *argv[])
+{
+  QCoreApplication a(argc, argv);
+
+  QString wlanlink = "";
+  QString parklink = "";
+
+  QString parkFilename = "parkautomaten";
+  QString wlanFilename = "wlan";
+
+  parkGetKonv(parklink, parkFilename);
+  wlanGetKonv(wlanlink, wlanFilename);
 
   return 0;
 }
