@@ -46,4 +46,7 @@ int main(void)
 ISR(INT0_vect)
 {
     intCounter++;
+    _delay_ms(100);
+    // Due to the switch bouncing we delete all new interrupts that appeared in the 100ms delay time
+    EIFR &= ~(1 << INTF0);
 }
