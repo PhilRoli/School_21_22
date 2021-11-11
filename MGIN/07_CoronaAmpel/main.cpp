@@ -61,8 +61,44 @@ void getFileData()
     cout << personalStufe.toStdString().c_str() << endl;
 }
 
+void trafficLight(string ampelStatus)
+{
+    cout << "          ##          " << endl;
+    cout << "         _[]_         " << endl;
+    cout << "        [____]        " << endl;
+    cout << "    .----'  '----.    " << endl;
+    cout << ".===|    .==.    |===." << endl;
+    cout << "\\   |   /####\\   |   /" << endl;
+    cout << "/   |   \\####/   |   \\" << endl;
+    cout << "'===|    `\"\"`    |==='"
+         << endl;
+    cout << ".===|    .==.    |===." << endl;
+    cout << "\\   |   /####\\   |   /" << endl;
+    cout << "/   |   \\####/   |   \\" << endl;
+    cout << "'===|    `\"\"`    |==='"
+         << endl;
+    cout << ".===|    .==.    |===." << endl;
+    cout << "\\   |   /####\\   |   /" << endl;
+    cout << "/   |   \\####/   |   \\" << endl;
+    cout << "'===|    `\"\"`    |==='"
+         << endl;
+    cout << ".===|    .==.    |===." << endl;
+    cout << "\\   |   /####\\   |   /" << endl;
+    cout << "/   |   \\####/   |   \\" << endl;
+    cout << "'===|    `\"\"`    |==='"
+         << endl;
+    cout << ".===|    .==.    |===." << endl;
+    cout << "\\   |   /####\\   |   /" << endl;
+    cout << "/   |   \\####/   |   \\" << endl;
+    cout << "'===|    `\"\"`    |==='"
+         << endl;
+    cout << "    '--.______.--'    " << endl;
+}
+
 int main(int argc, char *argv[])
 {
+    string ampelStatus = 0;
     QCoreApplication a(argc, argv);
     getFileData();
+    trafficLight(ampelStatus);
 }
