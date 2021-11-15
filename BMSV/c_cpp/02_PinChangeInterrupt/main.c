@@ -15,27 +15,29 @@ volatile unsigned int intCounter = 0;
 
 int main(void)
 {
-    // Trigger on any flank
+    // Enable Trigger Group 4 -> pin 24 in group 4
     PCICR |= (1 << PCIE3);
 
-    // Enable PCINT on pin 24
+    // Enable PCINT on pin 24 in Mask Group 4
     PCMSK3 |= (1 << PCINT24);
 
     // Enable all interrupts
     sei();
 
-    // Output
+    // Enable Output on PortA
     DDRA = 0xFF;
 
     /* Replace with your application code */
     while (1)
     {
-        // Output
+        // Output counter to Port A
         PORTA = intCounter;
     }
 }
 
+// Interrupt Service Routine with Group 4 Vector
 ISR(PCINT3_vect)
 {
+    // Increment Counter
     intCounter++;
 }
