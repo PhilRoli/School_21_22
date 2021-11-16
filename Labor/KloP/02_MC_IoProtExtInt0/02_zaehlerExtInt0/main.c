@@ -4,9 +4,9 @@
  * Created: 12.10.2021 10:00:36
  * Author : Philipp Rolinek
  * Class  : 4AHBG
- */ 
+ */
 
-#define  F_CPU 16000000UL
+#define F_CPU 16000000UL
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -20,10 +20,10 @@ volatile int intCounter = 0;
 
 int main(void)
 {
-	// Output to portB
+    // Output to portB
     DDRB = 0xFF;
-	// Input aktivieren
-	PORTD |= ( 1 << 2 );
+    // Input aktivieren
+    PORTD |= (1 << 2);
 
     // Set interrupt to trigger on negative flank
     EICRA |= 0x02;
@@ -32,7 +32,7 @@ int main(void)
     // Enable all interrupts
     sei();
     /* Replace with your application code */
-    while (1) 
+    while (1)
     {
         // Dauerhaftes ausgeben des Zähler Werts am PORTB
         // Erhöhen nur durch Interrupts
@@ -40,11 +40,10 @@ int main(void)
     }
 }
 
-ISR (INT0_vect) 
+ISR(INT0_vect)
 {
     _delay_ms(100);
     intCounter++;
-	// Löschen aller interupts die im zeitraum des delays aufgekommen sind
-	EIFR &= ~(1<< INTF0);
+    // Löschen aller interupts die im zeitraum des delays aufgekommen sind
+    EIFR |= (1 << INTF0);
 }
-
