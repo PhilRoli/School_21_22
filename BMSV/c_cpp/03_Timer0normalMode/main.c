@@ -14,7 +14,7 @@
 #include <avr/interrupt.h>
 
 volatile unsigned int tmp = 0;
-volatile unsigned int Timer0OverflowCounter = 0;
+volatile int Timer0OverflowCounter = 0;
 
 int main(void)
 {
@@ -26,6 +26,9 @@ int main(void)
     // Prescaler set to 8
     TCCR0B |= (1 << CS01);
 
+    // Prescaler set to 1024
+    // TCCR0B |= (1 << CS02) | (1 << CS00);
+
     // enable timer overflow interrupt
     TIMSK0 |= (1 << TOIE0);
 
@@ -36,6 +39,13 @@ int main(void)
     while (1)
     {
         tmp++;
+		
+		if ( Timer0OverflowCounter % 35 == 34)
+		{
+			// do something
+			tmp++;
+			Timer0OverflowCounter = 0;
+		}
     }
 }
 
