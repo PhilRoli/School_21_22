@@ -25,9 +25,9 @@ int main(void)
 
     // ?
     TCCR0A |= (1 << WGM01);
-	
-	// Output Compare Register
-	OCR0A = 20;
+
+    // Output Compare Register
+    OCR0A = 20;
 
     // Enable all interrupts
     sei();
