@@ -23,7 +23,8 @@ int main(void)
     // Enable Output Compare Interrupt Enable
     TIMSK0 |= (1 << OCIE0A);
 
-    // ?
+    // CTC (Clear Timer on Compare)
+    // Enables variable timer interrupt time
     TCCR0A |= (1 << WGM01);
 
     // Output Compare Register
