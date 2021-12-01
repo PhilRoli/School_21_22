@@ -20,3 +20,7 @@ gmr_pc.exe
 *.ggb
 *.odt
 00_Builds
+*.rar
+*.zip
+TRINITY*
+*.ods

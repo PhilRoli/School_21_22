@@ -8,6 +8,11 @@
  *		Header File for the interface to the timers for the AtMega644 Microprocessor
 */
 
+#ifndef TIMER_H
+#define TIMER_H
+
+#include "HTLStddef.h"
+
 typedef enum
 {
    TIMER_NO_0,
@@ -45,3 +50,5 @@ typedef TTimerStruct *TTimer;
 */
 TTimer
 TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency);
+
+#endif

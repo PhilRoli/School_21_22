@@ -8,6 +8,7 @@
  */
 
 #include <avr/io.h>
+#include "HTLStddef.h"
 
 int main(void)
 {

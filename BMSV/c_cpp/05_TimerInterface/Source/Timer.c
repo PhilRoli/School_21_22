@@ -9,7 +9,13 @@
 */
 
 #include "Timer.h"
+#include "HTLStddef.h"
 #include <stdlib.h>
+
+unsigned int TimerPrescaler[] = {1, 1, 8, 64, 256, 1042};
+
+// Declaration of private functions
+PRIVATE TBool TimerInitNo0(TTimer aTimer);
 
 /*
  * Function: TimerCreate
@@ -36,6 +42,21 @@ TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterv
       return NULL;
    }
 
+   timer->TimerNo = aTimerNo;
+   timer->TimerMode = aTimerMode;
+   timer->TimerInterval = aTimerInterval;
+   timer->ClockFrequency = aClkFrequency;
+
+   switch (aTimerNo)
+   {
+   case TIMER_NO_0:
+      TimerInitNo0(timer);
+      break;
+
+   default:
+      return NULL;
+   }
+
    return timer;
 }
 
@@ -48,3 +69,21 @@ TimerStart(TTimer aTimer);
 
 TimerStop(TTimer aTimer);
 #endif
+
+// Definition of private functions
+PRIVATE TBool TimerInitNo0(TTimer aTimer)
+{
+   TBool success;
+
+   switch (aTimer->TimerMode)
+   {
+   case TIMER_MODE_NORMAL:
+      /* code */
+      break;
+
+   default:
+      success = EFALSE;
+   }
+
+   return success;
+}
