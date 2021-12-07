@@ -8,11 +8,19 @@
  *    Interface to the timers for the AtMega644 Microprocessor
 */
 
+#include <stdlib.h>
+#include <avr/iom644p.h>
+#include <avr/io.h>
+#include <avr/interrupt.h>
+
 #include "Timer.h"
 #include "HTLStddef.h"
-#include <stdlib.h>
+
+#define MAX_TIMER_NO 2
 
 unsigned int TimerPrescaler[] = {1, 1, 8, 64, 256, 1042};
+
+TTimer TIMER[MAX_TIMER_NO + 1];
 
 // Declaration of private functions
 PRIVATE TBool TimerInitNo0(TTimer aTimer);
@@ -29,10 +37,14 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer);
  * Returnvalue:
  *    The timer object if successful, otherwise NULL
 */
-TTimer
-TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency)
+TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency)
 {
    TTimer timer;
+
+   if (aTimerNo > MAX_TIMER_NO)
+   {
+      return NULL;
+   }
 
    // Reserve the size of the TTimerStruct in the heap memory and clear the memory
    timer = calloc(sizeof(TTimerStruct), 1);
@@ -57,13 +69,19 @@ TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterv
       return NULL;
    }
 
+   TIMER[aTimerNo] = timer;
+
    return timer;
+}
+
+void TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData)
+{
+   aTimer->InterruptFunction = aFunction;
+   aTimer->UserData = aUserData;
 }
 
 #if 0
 TimerDestroy(TTimer aTimer);
-
-TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData);
 
 TimerStart(TTimer aTimer);
 
@@ -75,15 +93,42 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
 {
    TBool success;
 
+   double interval;
+   // Clock select bits
+   unsigned char cs0;
+
    switch (aTimer->TimerMode)
    {
    case TIMER_MODE_NORMAL:
-      /* code */
+
+      // Start with highest prescaler value
+      cs0 = sizeof(TimerPrescaler);
+      do
+      {
+         cs0--;
+         interval = ((double)TimerPrescaler[cs0] / aTimer->ClockFrequency) * 256;
+
+      } while (interval > aTimer->TimerInterval && cs0 > 0);
+
+      TCCR0B |= (cs0 << CS00);
+      TIMSK0 |= (1 << TOIE0);
+
       break;
 
    default:
       success = EFALSE;
    }
 
+   sei();
+
    return success;
+}
+
+/************************ Interrupt Service Routines ************************/
+ISR(TIMER0_OVF_vect)
+{
+   if (TIMER[TIMER_NO_0]->InterruptFunction != NULL)
+   {
+      TIMER[TIMER_NO_0]->InterruptFunction(TIMER[TIMER_NO_0]->UserData);
+   }
 }

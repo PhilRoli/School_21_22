@@ -26,12 +26,17 @@ typedef enum
    TIMER_MODE_CTC
 } TTimerMode;
 
+//
+typedef void (*TTimerFunction)(void *aUserData);
+
 typedef struct
 {
    TTimerNo TimerNo;
    TTimerMode TimerMode;
    unsigned long TimerInterval;
    unsigned long ClockFrequency;
+   TTimerFunction InterruptFunction;
+   void *UserData;
 } TTimerStruct;
 
 typedef TTimerStruct *TTimer;
@@ -48,7 +53,8 @@ typedef TTimerStruct *TTimer;
  * Returnvalue:
  *    The timer object if successful, otherwise NULL
 */
-TTimer
-TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency);
+TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency);
+
+void TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData);
 
 #endif
