@@ -13,6 +13,7 @@ int main(int argc, char *argv[])
     qDebug() << r.toString();
     qDebug() << "Area:" << r.calcA();
     qDebug() << "Circumference:" << r.calcU();
+    qDebug() << r.draw('*');
 
     return 0;
 }

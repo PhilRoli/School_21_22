@@ -18,6 +18,7 @@ public:
     int getMw();
     int calcA();
     int calcU();
+    QString draw(char symbol);
 };
 
 #endif // RECTANGLE_H

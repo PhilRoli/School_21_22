@@ -55,3 +55,17 @@ int Rectangle::calcU()
 {
     return 2 * mW + 2 * mL;
 }
+
+QString Rectangle::draw(char symbol)
+{
+    QString drawing;
+    for (int i = 1; i <= mL; i++)
+    {
+        for (int j = 1; j <= mW; j++)
+        {
+            drawing += symbol;
+        }
+        drawing += "\n";
+    }
+    return drawing;
+}
