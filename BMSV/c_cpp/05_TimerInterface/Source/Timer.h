@@ -23,7 +23,8 @@ typedef enum
 typedef enum
 {
    TIMER_MODE_NORMAL,
-   TIMER_MODE_CTC
+   TIMER_MODE_CTC,
+   TIMER_MODE_PWM_NON_INV
 } TTimerMode;
 
 //
@@ -53,6 +54,7 @@ typedef TTimerStruct *TTimer;
  * Returnvalue:
  *    The timer object if successful, otherwise NULL
 */
+
 TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency);
 
 void TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData);

@@ -7,25 +7,35 @@
  * Description:
  */
 
-#include <avr/iom644p.h>
 #include <avr/io.h>
 #include "HTLStddef.h"
 #include "Timer.h"
 
+// Define CPU CLock Frequency
 #define F_CPU 16000000UL
 
+// Timer Function to be called on interrupt
 void TimerFunction(void *aUserData)
 {
-    int *counter = (int *)aUserData;
-    *counter += 1;
+  int *counter = (int *)aUserData;
+  *counter += 1;
 }
 
 int main(void)
 {
-    TTimer timer;
-    timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, 1000, F_CPU);
-    /* Replace with your application code */
-    while (1)
-    {
-    }
+  TTimer timer;
+  int myCounter = 0;
+  volatile int tmp = 0;
+
+  // Create the Timer
+  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, 1000, F_CPU);
+
+  // Set the interrupt Function to be called
+  TimerSetFunction(timer, TimerFunction, &myCounter);
+  /* Replace with your application code */
+  while (1)
+  {
+    // tmp variable so main while loop has code
+    tmp++;
+  }
 }
