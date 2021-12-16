@@ -7,7 +7,8 @@ using namespace std;
 
 int stick[3][MAXNUM] = {{0}};
 
-void init() {
+void init()
+{
     for (int y = 0; y < MAXNUM; y++)
     {
         stick[0][y] = y + 1;
@@ -19,7 +20,7 @@ void show()
     for (int y = 0; y < MAXNUM; y++)
     {
         cout << " ";
-        for (int s = 0; s <3 ; s++)
+        for (int s = 0; s < 3; s++)
         {
             for (int i = 0; i < (MAXNUM - stick[s][y]); i++)
             {
@@ -45,32 +46,37 @@ void show()
         }
         cout << endl;
     }
-    for ( int i  = 0; i < (MAXNUM*3*2+3+2); i++)
+    for (int i = 0; i < (MAXNUM * 3 * 2 + 3 + 2); i++)
     {
         cout << "=";
     }
-    cout << "\n" << endl;
+    cout << "\n"
+         << endl;
 }
 
 void solve(int from, int to, int res, int num)
 {
-    if (num == 1) {
+    if (num == 1)
+    {
         show();
         // Find highest empty slot
         int i;
-        for (i = 0; stick[from][i] == 0; i++);
+        for (i = 0; stick[from][i] == 0; i++)
+            ;
 
         int pick = stick[from][i];
         stick[from][i] = 0;
 
-        for (i = 0; (stick[to][i] == 0) && (i < MAXNUM); i++);
+        for (i = 0; (stick[to][i] == 0) && (i < MAXNUM); i++)
+            ;
+
         i--;
         stick[to][i] = pick;
         return;
     }
-    solve(from, res, to, num-1);
+    solve(from, res, to, num - 1);
     solve(from, to, res, 1);
-    solve(res, to, from, num-1);
+    solve(res, to, from, num - 1);
 }
 
 int main(int argc, char *argv[])
