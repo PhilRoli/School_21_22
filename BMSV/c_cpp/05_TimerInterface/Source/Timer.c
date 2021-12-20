@@ -128,6 +128,10 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
    double interval;
    // Clock select bits
    unsigned char cs0;
+   unsigned long ocra;
+   unsigned char cs0Max;
+
+   cs0Max = sizeof(TimerPrescaler) / sizeof(int);
 
    switch (aTimer->TimerMode)
    {
@@ -135,7 +139,7 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
    case TIMER_MODE_NORMAL:
 
       // Start with highest prescaler value (array max +1)
-      cs0 = sizeof(TimerPrescaler) / sizeof(int);
+      cs0 = cs0Max;
       do
       {
          // Step down the prescaler (array position -1)
@@ -152,33 +156,35 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
 
       break;
 
-      // CTC Timer Mode
+   // CTC Timer Mode
    case TIMER_MODE_CTC:
-      cs0 = sizeof(TimerPrescaler) / sizeof(int);
-      double stepTime;
-      double totalSteps;
-      /*
-      if value > 265, go up with presclaer once
-      check if value is even, set registers
-      */
-      do
+      for (cs0 = 1; cs0 < cs0Max; cs0++)
       {
-         cs0--;
-         // calculate time of 1 step
-         stepTime = ((double)TimerPrescaler[cs0] / aTimer->ClockFrequency);
-         // calculate total steps needed with this stepTime
-         totalSteps = aTimer->TimerInterval / stepTime * 1000000;
-         // cs0 minimum 1, max steps 256 - 1
-      } while (cs0 > 0 && totalSteps <= 256 && totalSteps >= 1);
+         // Calculate Steps with given Presclaer
+         ocra = (unsigned long)((aTimer->TimerInterval / 1000000.0) * (aTimer->ClockFrequency / TimerPrescaler[cs0] - 1));
 
+         // If totalsteps in range 1 - 256, prescaler value found
+         if (ocra < 256)
+         {
+            break;
+         }
+
+         // if no prescaler is high enough, go with highest possible delay
+         if (cs0 >= cs0Max)
+         {
+            cs0 = cs0Max - 1;
+            ocra = 255;
+         }
+      }
+
+      // Set register to compare to
+      OCR0A = ocra;
       // Set Prescaler
       TCCR0B |= (cs0 << CS00);
-      // Enable Output Compare Mode
+      // Enable CTC Mode
       TIMSK0 |= (1 << OCIE0A);
-      // Enable Clear on Compare Mode
+      // Enable CLear on Compare
       TCCR0A |= (1 << WGM01);
-      // Output Compare Register
-      OCR0A = totalSteps;
 
       break;
 
@@ -201,6 +207,15 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
 
 /************************ Interrupt Service Routines ************************/
 ISR(TIMER0_OVF_vect)
+{
+   // If a interrupt function is defined, call it
+   if (TIMER[TIMER_NO_0]->InterruptFunction != NULL)
+   {
+      TIMER[TIMER_NO_0]->InterruptFunction(TIMER[TIMER_NO_0]->UserData);
+   }
+}
+
+ISR(TIMER0_COMPA_vect)
 {
    // If a interrupt function is defined, call it
    if (TIMER[TIMER_NO_0]->InterruptFunction != NULL)
