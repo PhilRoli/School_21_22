@@ -155,7 +155,6 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
       // CTC Timer Mode
    case TIMER_MODE_CTC:
       cs0 = sizeof(TimerPrescaler) / sizeof(int);
-      unsigned int schritte = 0;
       double stepTime;
       double totalSteps;
       /*
@@ -169,7 +168,17 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
          stepTime = ((double)TimerPrescaler[cs0] / aTimer->ClockFrequency);
          // calculate total steps needed with this stepTime
          totalSteps = aTimer->TimerInterval / stepTime * 1000000;
-      } while (cs0 > 0);
+         // cs0 minimum 1, max steps 256 - 1
+      } while (cs0 > 0 && totalSteps <= 256 && totalSteps >= 1);
+
+      // Set Prescaler
+      TCCR0B |= (cs0 << CS00);
+      // Enable Output Compare Mode
+      TIMSK0 |= (1 << OCIE0A);
+      // Enable Clear on Compare Mode
+      TCCR0A |= (1 << WGM01);
+      // Output Compare Register
+      OCR0A = totalSteps;
 
       break;
 
