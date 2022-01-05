@@ -16,6 +16,10 @@ void show(int board[DIM][DIM])
             {
                 cout << " . ";
             }
+            else
+            {
+                cout << " " << board[y][x] << " ";
+            }
         }
         cout << endl;
     }
@@ -78,8 +82,15 @@ bool isValid(int board[DIM][DIM], int y, int x)
     return true;
 }
 
+// 1 = Solved
+// 0 = Not possible
 int solve(int board[DIM][DIM], int numQueen)
 {
+    show(board);
+    if (numQueen > DIM)
+    {
+        return 1;
+    }
     for (int y = 0; y < DIM; y++)
     {
         // (board, y, x)
@@ -89,7 +100,7 @@ int solve(int board[DIM][DIM], int numQueen)
             board[y][numQueen - 1] = numQueen;
         }
     }
-    return 1;
+    return 0;
 }
 
 int main(int argc, char *argv[])
@@ -99,6 +110,8 @@ int main(int argc, char *argv[])
     show(board);
 
     solve(board, 1);
+
+    show(board);
 
     return 0;
 }
