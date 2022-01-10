@@ -61,8 +61,32 @@ int TestTimerCTC(void)
   }
 }
 
+int TestTimerFastPWM(void)
+{
+  TTimer timer;
+  int myCounter = 0;
+  volatile int tmp = 0;
+
+  // Create the Timer
+  // Timer Number, Timer Mode, Interval in us, CPU Frequency
+  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_PWM_NON_INV, 100, F_CPU);
+
+  TimerSetPwmDutyCycle(timer, 0x40);
+
+  // Set OC0A pin to output
+  DDRB |= (1 << 3);
+
+  /* Replace with your application code */
+  while (1)
+  {
+    // tmp variable so main while loop has code
+    tmp++;
+  }
+}
+
 int main(void)
 {
   // TestTimerNormal();
-  TestTimerCTC();
+  // TestTimerCTC();
+  TestTimerFastPWM();
 }
