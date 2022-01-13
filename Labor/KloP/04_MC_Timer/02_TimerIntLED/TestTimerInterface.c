@@ -5,12 +5,10 @@
  * Author : Philipp Rolinek
  * Class  : 4AHBG
  * Description:
- *      TimerVariable (mycounter) -> every 100us +1
- *      Period Time = 10 000us -> 100 Timer Interrupts
- *      Button Variable -> +1 = 100us longer on Time of LED
- *      TimerVar = 0 -> LED on
- *      TimerVar = ButtonVar -> LED out
- *      TimerVar = 100 -> TimerVar = 0 -> LED on
+ *      Timer counts up permanently
+ *      Set Period Time = Diffrence of one period
+ *      Button Inc = Interrupts LED is on
+ *      
  */
 
 #include <avr/interrupt.h>
@@ -25,7 +23,7 @@
 // time between each timer interrupt
 volatile int timerPeriod = 100;
 // complete LED period time
-volatile int ledPeriod = 10000;
+volatile int ledPeriod = 100;
 // Max Num of timer interrupts befor LED off + max num of buttoninc
 // calc: ledPeriod / timerPeriod
 volatile int periodMax = 100;
@@ -41,7 +39,7 @@ void TimerFunction(void *aUserData)
 int main(void)
 {
     TTimer timer;
-    int mycounter = 0;
+    unsigned int mycounter = 0;
     timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, timerPeriod, F_CPU);
     TimerSetFunction(timer, TimerFunction, &mycounter);
 
@@ -68,26 +66,52 @@ int main(void)
     PORTD |= (1 << 2);
     PORTD |= (1 << 3);
 
+    // initialize old counter
+    unsigned int oldcounter = 0;
+    // initialize diff counter
+    unsigned int diffcounter;
+
     /* Replace with your application code */
     while (1)
     {
-        if (mycounter == 0)
+        diffcounter = mycounter - oldcounter;
+
+        if (diffcounter == 100)
         {
-            // if mycounter == 0 -> LED on
             PORTA |= (1 << 0);
+            oldcounter = mycounter;
         }
-        else if (mycounter == buttoninc)
+
+        if (diffcounter == 20)
         {
-            // if mycounter == buttoninc -> LED off
             PORTA &= ~(1 << 0);
         }
-        else if (mycounter == periodMax)
-        {
-            // if mycounter has reached period max -> reset to 0
-            mycounter = 0;
-        }
+
+        // if (oldcounter > mycounter)
+        // {
+        //     diffcounter = mycounter + (65.535 - oldcounter);
+        // }
+        // else
+        // {
+        //     diffcounter = mycounter - oldcounter;
+        // }
+
+        // // Start of Period - LED on
+        // if (diffcounter == ledPeriod)
+        // {
+        //     oldcounter = mycounter;
+        //     PORTA |= (1 << 0);
+        // }
+
+        // // End of LED on time - LED off
+        // if (diffcounter == buttoninc)
+        // {
+        //     PORTA &= ~(1 << 0);
+        // }
+
         // output current buttonInc value (7 LED's)
         PORTB = buttoninc;
+        // PORTB = 0x33; //00110011;
     }
 }
 

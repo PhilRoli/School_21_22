@@ -18,7 +18,7 @@
 // Number of Timer Modes available
 #define MAX_TIMER_NO 2
 
-// Presclaer Modes available for ATmega644P
+// Pre-scaler Modes available for ATmega644P
 unsigned int TimerPrescaler[] = {1, 1, 8, 64, 256, 1024};
 
 // initialize array of Timers, which will hold our Timers
@@ -36,7 +36,7 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer);
  *    aTimerMode      - The wanted timer Mode. See also TTimerMode
  *    aTimerIntervall - The wanted timer interrupt interval in us
  *    aClkFrequency   - The CPU clock frequency
- * Returnvalue:
+ * Return value:
  *    The timer object if successful, otherwise NULL
 */
 
@@ -91,7 +91,7 @@ TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTime
 }
 
 /* 
- *  Set the funtion to be triggered on Timer interrupt
+ *  Set the function to be triggered on Timer interrupt
  *  @aTimer > The timer which uses this function
  *  @aFunction > The Function to be called
  *  @*aUserData > A pointer to the variable which the Function uses
