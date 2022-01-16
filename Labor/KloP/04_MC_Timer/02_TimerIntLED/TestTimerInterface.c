@@ -24,13 +24,15 @@
 //! All times in us
 // time between each timer interrupt
 volatile int timerPeriod = 100;
-// complete LED period time
+// complete LED period time (10ms)
 volatile int ledPeriod = 10000;
-// Max Num of timer interrupts befor LED off + max num of buttoninc
+// max num of buttoninc
 // calc: ledPeriod / timerPeriod
 volatile int periodMax = 100;
 // Variable changed by up / down buttons
 volatile int buttoninc = 0;
+// Counter changed by Timer Interrupts
+volatile int mycounter = 0;
 
 void TimerFunction(void *aUserData)
 {
@@ -40,18 +42,16 @@ void TimerFunction(void *aUserData)
 
 int main(void)
 {
-    TTimer timer;
-    int mycounter = 0;
-    timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, timerPeriod, F_CPU);
+    TTimer timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, timerPeriod, F_CPU);
     TimerSetFunction(timer, TimerFunction, &mycounter);
 
     //* Registerys for Interrupts
 
-    // Output of LED Signal on PortA pin 0
-    DDRA |= (1 << 0);
+    // Output of LED Signal on PortB pin 2
+    DDRB |= (1 << 2);
 
-    // Output Counter Value
-    DDRB = 0xFF;
+    // Output Counter Value to 8 other LEDs
+    DDRA = 0xFF;
 
     // Set button Interrupt to trigger on negative flank
     EICRA |= 0x0A;
@@ -68,26 +68,22 @@ int main(void)
     PORTD |= (1 << 2);
     PORTD |= (1 << 3);
 
+    // higher deltatime -> brigther led
+    int deltatime = ledPeriod / periodMax;
+
     /* Replace with your application code */
     while (1)
     {
-        if (mycounter == 0)
-        {
-            // if mycounter == 0 -> LED on
-            PORTA |= (1 << 0);
-        }
-        else if (mycounter == buttoninc)
-        {
-            // if mycounter == buttoninc -> LED off
-            PORTA &= ~(1 << 0);
-        }
-        else if (mycounter == periodMax)
-        {
-            // if mycounter has reached period max -> reset to 0
-            mycounter = 0;
-        }
-        // output current buttonInc value (7 LED's)
-        PORTB = buttoninc;
+        // Turn on LED
+        PORTB |= (1 << 2);
+        // Delay for deltatime * buttoninc
+        delayTimer(deltatime * buttoninc);
+        // turn off LED
+        PORTB &= ~(1 << 2);
+        // Wait out rest of the period time
+        delayTimer(ledPeriod - (deltatime * buttoninc));
+        // output current buttonInc value
+        PORTA = buttoninc;
     }
 }
 
@@ -107,4 +103,25 @@ ISR(INT1_vect)
     {
         buttoninc--;
     }
+}
+
+// function for waiting a specified time
+void delayTimer(int waitTimeUS)
+{
+    // reset mycounter to 0 for fresh counting
+    // done at the beginning to include the calculation time
+    mycounter = 0;
+    // if waitTime == 0, return
+    if (waitTimeUS == 0)
+    {
+        return;
+    }
+    // waitCounter = times the timer has to trigger for the specified time to pass
+    int waitCounter = waitTimeUS / timerPeriod;
+    int tmpVar = 0;
+    while (mycounter < waitCounter)
+    {
+        tmpVar++;
+    }
+    return;
 }

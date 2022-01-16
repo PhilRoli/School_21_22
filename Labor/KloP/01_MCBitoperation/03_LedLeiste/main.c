@@ -6,21 +6,21 @@
  * Class  : 4AHBG
  */
 
- #define  F_CPU 16000000UL
- #include <avr/io.h>
- #include <util/delay.h>
+#define F_CPU 16000000UL
+#include <avr/io.h>
+#include <util/delay.h>
 
- #define INPUT_MASK 0x01;
+#define INPUT_MASK 0x01;
 
 int main(void)
 {
 	DDRA = 0xFF;
-	
+
 	char outputwert = 1;
-	
-    /* Replace with your application code */
-    while (1) 
-    {
+
+	/* Replace with your application code */
+	while (1)
+	{
 		// PORTA = outputwert;
 		/*
 		if (outputwert < 128) {
@@ -28,20 +28,21 @@ int main(void)
 		} else if (outputwert = 128) {
 			
 			*/
-		while (outputwert < 128) {
+		while (outputwert < 128)
+		{
 			outputwert = outputwert * 2;
 			_delay_ms(100);
 			PORTA = outputwert;
 		}
-		
-		while (outputwert > 1) {
-				outputwert = outputwert / 2;
-				_delay_ms(100);
-				PORTA = outputwert;
-			}
-		//}
-		
-		//_delay_ms(100);
-    } 
-}
 
+		while (outputwert > 1)
+		{
+			outputwert = outputwert / 2;
+			_delay_ms(100);
+			PORTA = outputwert;
+		}
+		//}
+
+		//_delay_ms(100);
+	}
+}
