@@ -18,7 +18,7 @@
 // Number of Timer Modes available
 #define MAX_TIMER_NO 2
 
-// Presclaer Modes available for ATmega644P
+// Pre-scaler Modes available for ATmega644P
 unsigned int TimerPrescaler[] = {1, 1, 8, 64, 256, 1024};
 
 // initialize array of Timers, which will hold our Timers
@@ -36,7 +36,7 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer);
  *    aTimerMode      - The wanted timer Mode. See also TTimerMode
  *    aTimerIntervall - The wanted timer interrupt interval in us
  *    aClkFrequency   - The CPU clock frequency
- * Returnvalue:
+ * Return value:
  *    The timer object if successful, otherwise NULL
 */
 
@@ -91,7 +91,7 @@ TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTime
 }
 
 /* 
- *  Set the funtion to be triggered on Timer interrupt
+ *  Set the function to be triggered on Timer interrupt
  *  @aTimer > The timer which uses this function
  *  @aFunction > The Function to be called
  *  @*aUserData > A pointer to the variable which the Function uses
@@ -109,6 +109,7 @@ void TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData)
 TBool TimerSetPwmDutyCycle(TTimer aTimer, unsigned char aValue)
 {
    // Change can result in an unwanted behavior
+   OCR0A = aValue;
 }
 
 // Functions not finished / used
@@ -191,6 +192,28 @@ PRIVATE TBool TimerInitNo0(TTimer aTimer)
       // PWM Timer Mode
    case TIMER_MODE_PWM_NON_INV:
       // Fast PWM Mode
+
+      // Start with highest prescaler value (array max +1)
+      cs0 = cs0Max;
+      do
+      {
+         // Step down the prescaler (array position -1)
+         cs0--;
+         // Calculate the new interval
+         interval = ((double)TimerPrescaler[cs0] / aTimer->ClockFrequency) * 256;
+         // Check if interval is bigger then the wanted interval, if yes, lower prescaler
+         // or stop if the prescaler is at 1
+      } while (interval * 1000000 > aTimer->TimerInterval && cs0 > 0);
+
+      // Setting the correct Flags for the Normal Timer Mode
+      TCCR0B |= (cs0 << CS00);
+      // Enable PWM Mode 11 << 0
+      TCCR0A |= (3 << WGM00);
+      // Enable Non Inverted Mode 10 << 6
+      TCCR0A |= (2 << COM0A0);
+      // Precaution
+      OCR0A = 0;
+
       break;
 
    default:

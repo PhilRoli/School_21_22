@@ -59,4 +59,6 @@ TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTime
 
 void TimerSetFunction(TTimer aTimer, TTimerFunction aFunction, void *aUserData);
 
+TBool TimerSetPwmDutyCycle(TTimer aTimer, unsigned char aValue);
+
 #endif
