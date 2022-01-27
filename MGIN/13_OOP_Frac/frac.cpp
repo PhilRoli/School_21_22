@@ -19,3 +19,15 @@ QString Frac::toString()
     str += QString::number(mNum) + "/" + QString::number(mDen);
     return str;
 }
+
+Frac Frac::add(Frac b)
+{
+    return add(*this, b);
+}
+
+Frac Frac::add(Frac a, Frac b)
+{
+    int gDen = a.mDen * b.mDen;
+    int num = a.mNum * b.mDen + b.mNum * a.mDen;
+    return Frac(num, gDen);
+}
