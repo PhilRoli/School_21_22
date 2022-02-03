@@ -17,7 +17,7 @@ Res Res::par(Res r1, Res r2)
 
 Res Res::par(Res r2)
 {
-    this->rValue = (this->rValue * r2.rValue) / (this->rValue + r2.rValue);
+    return this->rValue = (this->rValue * r2.rValue) / (this->rValue + r2.rValue);
 }
 
 QString Res::toString()

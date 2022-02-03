@@ -2,7 +2,7 @@
 #include <QDebug>
 #include "res.h"
 
-int main(int argc, char *argv[])
+int main()
 {
     Res r1(100);
     Res r2(100);
