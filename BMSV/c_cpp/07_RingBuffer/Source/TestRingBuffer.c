@@ -9,6 +9,9 @@
 */
 
 #include <avr/io.h>
+#include <stdio.h>
+#include "RingBuffer.h"
+#include "HTLStddef.h"
 
 int main(void)
 {

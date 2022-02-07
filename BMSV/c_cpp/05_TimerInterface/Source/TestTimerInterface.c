@@ -29,7 +29,7 @@ int TestTimerNormal(void)
 
   // Create the Timer
   // Timer Number, Timer Mode, Interval in us, CPU Frequency
-  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, 1000, F_CPU);
+  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_NORMAL, 100, F_CPU);
 
   // Set the interrupt Function to be called
   TimerSetFunction(timer, TimerFunction, &myCounter);
@@ -49,7 +49,7 @@ int TestTimerCTC(void)
 
   // Create the Timer
   // Timer Number, Timer Mode, Interval in us, CPU Frequency
-  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_CTC, 1000, F_CPU);
+  timer = TimerCreate(TIMER_NO_0, TIMER_MODE_CTC, 100, F_CPU);
 
   // Set the interrupt Function to be called
   TimerSetFunction(timer, TimerFunction, &myCounter);
@@ -87,6 +87,6 @@ int TestTimerFastPWM(void)
 int main(void)
 {
   // TestTimerNormal();
-  // TestTimerCTC();
-  TestTimerFastPWM();
+  TestTimerCTC();
+  // TestTimerFastPWM();
 }
