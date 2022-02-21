@@ -29,6 +29,7 @@ int main()
     for (i = 1; i <= no_rolls; i++)
     {
         int index = rollRnd.nextIntRand(NO_SIDES) + 1;
+        cout << i << ": " << index << endl;
         rollCount[index]++;
     }
     cout << "WURF\tHAEUFIGKEIT\trelative HAEUFIGKEIT" << endl;

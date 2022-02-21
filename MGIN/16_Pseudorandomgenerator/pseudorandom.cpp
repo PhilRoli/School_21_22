@@ -12,9 +12,11 @@ PseudoRandom::PseudoRandom(long seed)
 
 double PseudoRandom::nextRand()
 {
-    return (a * currentX) % n;
+    currentX = ((a * currentX) % n);
+    return (double)currentX / n;
 }
 
-int PseudoRandom::nextIntRand(int NO_SIDES)
+unsigned long PseudoRandom::nextIntRand(unsigned int NO_SIDES)
 {
+    return nextRand() * NO_SIDES;
 }
