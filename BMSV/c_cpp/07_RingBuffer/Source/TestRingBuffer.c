@@ -56,6 +56,12 @@ TBool TestRingbuffer1(void)
             error++;
         }
     }
+
+    if (error)
+    {
+        return EFALSE;
+    }
+    return ETRUE;
 }
 
 TBool TestRingbuffer2(void)
@@ -87,4 +93,10 @@ TBool TestRingbuffer2(void)
             }
         }
     }
+
+    if (error)
+    {
+        return EFALSE;
+    }
+    return ETRUE;
 }

@@ -16,7 +16,7 @@
 
 int MyPut(char aCharacter, FILE *aFile)
 {
-    Rs232WriteByte(aCharacter);
+    // Rs232WriteByte(aCharacter);
     return 1;
 }
 
@@ -28,7 +28,10 @@ int main(void)
     // MyPut is called by printf
     fdevopen(MyPut, NULL);
 
-    Rs232Init();
+    if (!Rs232Init(5, 5))
+    {
+        return EFALSE;
+    }
 
 #if 0
     /* Replace with your application code */
