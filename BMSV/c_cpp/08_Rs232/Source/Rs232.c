@@ -6,11 +6,12 @@
  * Class: 4AHBG
  * Description:
  *		Simple polling interface for the Rs232 module of the AtMega644
- *    micro controller
+ *     micro controller
  */
 
 #include <stdlib.h>
 #include <avr/io.h>
+#include <avr/interrupt.h>
 #include "HTLStddef.h"
 #include "RingBuffer.h"
 #include "Rs232.h"
@@ -23,9 +24,9 @@
  *******************************************************************************/
 struct TRs232Struct
 {
-   ERS232_NU Rs232Nu;
-   TRingBuffer SendRingbuffer;
-   TRingBuffer ReciveRingbuffer;
+    ERS232_NU Rs232Nu;
+    TRingBuffer SendRingbuffer;
+    TRingBuffer ReciveRingbuffer;
 };
 
 /*******************************************************************************
@@ -41,33 +42,35 @@ TRs232 Rs232_0;
  *******************************************************************************/
 TRs232 Rs232Init(unsigned char aReciveBufferSize, unsigned char aSendBufferSize)
 {
-   TRs232 rs232;
-   rs232 = calloc(sizeof(struct TRs232Struct), 1);
-   if (!rs232)
-   {
-      return NULL;
-   }
+    TRs232 rs232;
+    rs232 = calloc(sizeof(struct TRs232Struct), 1);
+    if (!rs232)
+    {
+        return NULL;
+    }
 
-   UCSR0A = 0;
-   UCSR0B = 0;
-   UCSR0C = 0;
+    UCSR0A = 0;
+    UCSR0B = 0;
+    UCSR0C = 0;
 
-   UCSR0B = (1 << RXEN0) | (1 << TXEN0);
-   UCSR0C = (3 << UCSZ00);
-   // 9600 Baud
-   UBRR0 = 103;
+    UCSR0B = (1 << RXEN0) | (1 << TXEN0);
+    UCSR0C = (3 << UCSZ00);
+    // 9600 Baud
+    UBRR0 = 103;
 
-   rs232->ReciveRingbuffer = RingbufferCreate(aReciveBufferSize + 1);
-   rs232->SendRingbuffer = RingbufferCreate(aSendBufferSize + 1);
+    rs232->ReciveRingbuffer = RingbufferCreate(aReciveBufferSize + 1);
+    rs232->SendRingbuffer = RingbufferCreate(aSendBufferSize + 1);
 
-   if (!rs232->ReciveRingbuffer || !rs232->SendRingbuffer)
-   {
-      Rs232Destory(rs232);
-      return NULL;
-   }
+    if (!rs232->ReciveRingbuffer || !rs232->SendRingbuffer)
+    {
+        Rs232Destory(rs232);
+        return NULL;
+    }
 
-   Rs232_0 = rs232;
-   return rs232;
+    Rs232_0 = rs232;
+    sei();
+
+    return rs232;
 }
 
 /*******************************************************************************
@@ -77,13 +80,13 @@ TRs232 Rs232Init(unsigned char aReciveBufferSize, unsigned char aSendBufferSize)
  *******************************************************************************/
 TBool Rs232WriteByte(TRs232 aRs232, unsigned char aByte)
 {
-   if (!RingbufferWrite(aRs232->SendRingbuffer, aByte))
-   {
-      return EFALSE;
-   }
+    if (!RingbufferWrite(aRs232->SendRingbuffer, aByte))
+    {
+        return EFALSE;
+    }
 
-   UCSR0B |= (1 << UDRIE0);
-   return ETRUE;
+    UCSR0B |= (1 << UDRIE0);
+    return ETRUE;
 }
 
 /*******************************************************************************
@@ -93,13 +96,13 @@ TBool Rs232WriteByte(TRs232 aRs232, unsigned char aByte)
  *******************************************************************************/
 TBool Rs232Read(unsigned char *aByte)
 {
-   if (UCSR0A & (1 << RXC0))
-   {
-      *aByte = UDR0;
-      return ETRUE;
-   }
+    if (UCSR0A & (1 << RXC0))
+    {
+        *aByte = UDR0;
+        return ETRUE;
+    }
 
-   return EFALSE;
+    return EFALSE;
 }
 
 /*******************************************************************************
@@ -108,16 +111,16 @@ TBool Rs232Read(unsigned char *aByte)
  *******************************************************************************/
 void Rs232Destory(TRs232 aRs232)
 {
-   if (aRs232->ReciveRingbuffer)
-   {
-      RingbufferDestroy(aRs232->ReciveRingbuffer);
-   }
-   if (aRs232->SendRingbuffer)
-   {
-      RingbufferDestroy(aRs232->SendRingbuffer);
-   }
+    if (aRs232->ReciveRingbuffer)
+    {
+        RingbufferDestroy(aRs232->ReciveRingbuffer);
+    }
+    if (aRs232->SendRingbuffer)
+    {
+        RingbufferDestroy(aRs232->SendRingbuffer);
+    }
 
-   free(aRs232);
+    free(aRs232);
 }
 
 /*******************************************************************************
@@ -127,13 +130,13 @@ void Rs232Destory(TRs232 aRs232)
  *******************************************************************************/
 ISR(USART0_UDRE_vect)
 {
-   unsigned char data;
-   if (RingbufferRead(Rs232_0->SendRingbuffer, &data))
-   {
-      UDR0 = data;
-   }
-   else
-   {
-      UCSR0B &= ~(1 << UDRIE0);
-   }
+    unsigned char data;
+    if (RingbufferRead(Rs232_0->SendRingbuffer, &data))
+    {
+        UDR0 = data;
+    }
+    else
+    {
+        UCSR0B &= ~(1 << UDRIE0);
+    }
 }

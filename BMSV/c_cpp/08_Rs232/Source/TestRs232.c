@@ -14,9 +14,11 @@
 #include "Rs232.h"
 #include "HTLStddef.h"
 
+TRs232 MyRs232;
+
 int MyPut(char aCharacter, FILE *aFile)
 {
-    // Rs232WriteByte(aCharacter);
+    Rs232WriteByte(MyRs232, aCharacter);
     return 1;
 }
 
@@ -28,10 +30,7 @@ int main(void)
     // MyPut is called by printf
     fdevopen(MyPut, NULL);
 
-    if (!Rs232Init(5, 5))
-    {
-        return EFALSE;
-    }
+    MyRs232 = Rs232Init(20, 200);
 
 #if 0
     /* Replace with your application code */
