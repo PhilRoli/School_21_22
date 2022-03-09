@@ -6,7 +6,7 @@
  * Class: 4AHBG
  * Description:
  *		Header File for the interface to the timers for the AtMega644 Microprocessor
-*/
+ */
 
 #ifndef TIMER_H
 #define TIMER_H
@@ -24,7 +24,8 @@ typedef enum
 {
    TIMER_MODE_NORMAL,
    TIMER_MODE_CTC,
-   TIMER_MODE_PWM_NON_INV
+   TIMER_MODE_PWM_NON_INV,
+   TIMER_MODE_PWM_2 // Output OC0B, Port B, Pin 4
 } TTimerMode;
 
 //
@@ -53,7 +54,7 @@ typedef TTimerStruct *TTimer;
  *    aClkFrequency   - The CPU clock frequency
  * Returnvalue:
  *    The timer object if successful, otherwise NULL
-*/
+ */
 
 TTimer TimerCreate(TTimerNo aTimerNo, TTimerMode aTimerMode, unsigned long aTimerInterval, unsigned long aClkFrequency);
 

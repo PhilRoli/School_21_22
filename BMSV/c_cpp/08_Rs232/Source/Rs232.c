@@ -68,6 +68,7 @@ TRs232 Rs232Init(unsigned char aReciveBufferSize, unsigned char aSendBufferSize)
     }
 
     Rs232_0 = rs232;
+    UCSR0B |= (1 << RXCIE0);
     sei();
 
     return rs232;
@@ -96,9 +97,8 @@ TBool Rs232WriteByte(TRs232 aRs232, unsigned char aByte)
  *******************************************************************************/
 TBool Rs232Read(unsigned char *aByte)
 {
-    if (UCSR0A & (1 << RXC0))
+    if (RingbufferRead(Rs232_0->ReciveRingbuffer, aByte))
     {
-        *aByte = UDR0;
         return ETRUE;
     }
 
@@ -138,5 +138,13 @@ ISR(USART0_UDRE_vect)
     else
     {
         UCSR0B &= ~(1 << UDRIE0);
+    }
+}
+
+ISR(USART0_RX_vect)
+{
+    if (UCSR0A & (1 << RXC0))
+    {
+        RingbufferWrite(Rs232_0->ReciveRingbuffer, UDR0);
     }
 }
