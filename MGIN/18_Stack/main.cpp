@@ -3,7 +3,14 @@
 #include <iostream>
 
 using namespace std;
+/*******************************************************************************
+ * Definition * -> Pointer
+ * Usage * -> Inhalt
+ * Definition & -> Adresse
+ * Usage & -> Reference Variable
+ *******************************************************************************/
 
+/*******************************************************************************
 class Buffer
 {
     // Pointer to Data
@@ -50,19 +57,30 @@ public:
         return (pos == 0);
     }
 };
-
+*******************************************************************************/
 class Stack
 {
+public:
     // Pointer to Data
     int *data;
     // current position in stack
     int pos;
 
-public:
     Stack()
     {
         data = nullptr;
         pos = 0;
+    }
+
+    // Copy Constructor
+    Stack(const Stack &s)
+    {
+        this->pos = s.pos;
+        this->data = (int *)(malloc(sizeof(int) * pos));
+        for (int i = 0; i < pos; i++)
+        {
+            data[i] = s.data[i];
+        }
     }
 
     ~Stack()
@@ -96,9 +114,41 @@ public:
     {
         return (pos == 0);
     }
+
+    Stack operator+(int num)
+    {
+        for (int i = 0; i < pos; i++)
+        {
+            data[i] += num;
+        }
+        return *this;
+    }
+
+    Stack operator=(const Stack &op2)
+    {
+        pos = op2.pos;
+        data = (int *)(malloc(sizeof(int) * pos));
+        for (int i = 0; i < pos; i++)
+        {
+            data[i] = op2.data[i];
+        }
+        return *this;
+    }
+
+    Stack &operator<<(int num)
+    {
+        push(num);
+        return *this;
+    }
 };
 
-int main(int argc, char *argv[])
+ostream &operator<<(ostream &os, Stack &s)
+{
+    os << s.pull();
+    return os;
+}
+
+int main()
 {
     Stack s;
     s.push(1);
@@ -116,9 +166,13 @@ int main(int argc, char *argv[])
     s.push(13);
     s.push(14);
 
+    s = s + 3;
+
+    s << 666 << 555;
+
     while (!s.isEmpty())
     {
-        cout << s.pull() << endl;
+        cout << s << endl;
     }
 
     return 0;
