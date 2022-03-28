@@ -109,6 +109,7 @@ int main()
     Triangle t1(2, 2, 3);
     sameTriangle t2(2);
 
+    // Polymorphismus
     Shape *shapeList[] = {&r1, &r2, &r3, &s1, &s2, &t1, &t2};
 
     for (int i = 0; i < 7; i++)

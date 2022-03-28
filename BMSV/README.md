@@ -1,3 +1,9 @@
-# CURRENT PROJECT WILL NO LONGER BE PUSHED ON REQUEST OF TEACHER
+# Biomedizinische Signal Verarbeitung
 
-## Only already finsihed Projects will be pushed
+## All Projects are written for the ATmega644P Microchip
+
+## Compiled in MicroChip Studio
+
+## Uploaded via chip45boot2 GUI
+
+## For the Rs232 port we use HTerm
