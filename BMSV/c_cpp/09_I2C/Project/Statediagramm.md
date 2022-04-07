@@ -9,6 +9,7 @@ graph TD;
     adressRead([READ ADRESS])
     byteWrite([BYTE WRITE])
     byteRead([BYTE READ])
+    finalByteRead([FINAL BYTE READ])
     stop{{STOP}}
     stopEr{{ERROR STOP}}
     finish([FINISH])
@@ -34,12 +35,13 @@ graph TD;
 
 %% Read 1 state more -> Last Byte
     subgraph read
-        start --> |=0x| adressRead;
-        adressRead --> |=0x| byteRead;
-        adressRead --> |!=0x| error;
-        byteRead --> |!=0x| error;
-        byteRead --> |==0x && moreBytes| byteRead;
-        byteRead --> |noMoreBytes| stop;
+        start --> |=0x08| adressRead;
+        adressRead --> |=0x40| byteRead;
+        adressRead --> |!=0x40| error;
+        byteRead --> |!=0x58| error;
+        byteRead --> |==0x58 && moreBytes| byteRead;
+        byteRead --> |readOneMore| finalByteRead
+        finalByteRead --> |noMoreBytes| stop;
     end
 
 
@@ -47,5 +49,4 @@ graph TD;
     classDef idleClass fill:#A65;
     classDef errorClass fill:#F20;
     classDef startClass fill:#A91;
-
 ```
