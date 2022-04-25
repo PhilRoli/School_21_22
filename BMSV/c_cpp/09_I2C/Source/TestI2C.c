@@ -11,9 +11,13 @@
  *******************************************************************************/
 
 #include <avr/io.h>
+#include "I2C.h"
+#define F_CPU 16000000UL
 
 int main(void)
 {
+    TI2c i2c;
+    i2c = I2cCreate(E_I2C_NO_0, F_CPU, 100000UL);
     while (1)
     {
     }
