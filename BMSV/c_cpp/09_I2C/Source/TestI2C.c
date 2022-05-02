@@ -16,8 +16,7 @@
 
 int main(void)
 {
-    TI2c i2c;
-    i2c = I2cInit(F_CPU, 100000UL);
+    I2cInit(F_CPU, 100000UL);
     while (1)
     {
     }

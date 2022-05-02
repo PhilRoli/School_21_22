@@ -11,10 +11,15 @@
 #include <stdlib.h>
 #include <avr/io.h>
 #include <avr/interrupt.h>
+
 #include "I2C.h"
 #include "HTLStddef.h"
 #include "RingBuffer.h"
 #include "twi.h"
+
+#define SDA_PIN 1
+#define SCL_PIN 0
+#define TWI_PIN_PORT PINC
 
 /*******************************************************************************
  * Structure of the I2C Bus Object
@@ -24,6 +29,7 @@ struct TI2cStruct
 {
     TI2cState I2cState;
     TRingBuffer WBuffer;
+    unsigned char Address;
 };
 
 // Private Variables
@@ -52,10 +58,10 @@ TBool I2cInit(
     }
 
     I2c->WBuffer = RingbufferCreate(MAX_BUFFER_SIZE + 1);
-    if ( I2c->WBuffer)
-
-    I2c->I2cState = I2C_STATE_IDLE;
-
+    if (I2c->WBuffer)
+    {
+        I2c->I2cState = I2C_STATE_IDLE;
+    }
     // Set bitrate -> TWBT register
     // Set Prescaler -> TWSR register
     // Array - highest -> lowest
@@ -70,6 +76,8 @@ TBool I2cInit(
 
     TWSR = (i << TWPS0);
     TWBR = twbr;
+
+    sei();
 
     return ETRUE;
 }
@@ -86,14 +94,20 @@ TBool I2cWrite(
     unsigned char *aBuffer,
     unsigned char aBufferSize)
 {
-#if 1
-    I2cStartWrite(aI2c);
-
     // Create ring buffer and store data bytes
     // Store Data bytes in a ring buffer
     // Write Data bytes
-
-#endif
+    unsigned int i;
+    for (i = 0; i < aBufferSize; i++)
+    {
+        if (!RingbufferWrite(I2c->WBuffer, aBuffer[i]))
+        {
+            return EFALSE;
+        }
+    }
+    I2c->Address = aSlaveAddress;
+    I2c->I2cState = I2C_STATE_START_W;
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
 }
 
 /*******************************************************************************
@@ -126,4 +140,91 @@ TI2cState I2cGetState(TI2c aI2c)
  *******************************************************************************/
 void I2cDone(void)
 {
+}
+
+/*******************************************************************************
+ * Description
+ * @param void
+ * @return void
+ *******************************************************************************/
+void I2cStop(void)
+{
+    volatile unsigned int counter;
+    unsigned char pins = (1 << SDA_PIN) | (1 << SCL_PIN);
+    TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN);
+    for (counter = 0; counter < 100; counter++)
+    {
+        if ((TWI_PIN_PORT & pins) == pins)
+        {
+            break;
+        }
+    }
+}
+
+/************************** INTERRUPT SERVICE ROUTINE **************************/
+ISR(TWI_vect)
+{
+    unsigned char dataByte;
+    unsigned char i2cStatus;
+    i2cStatus = (TWSR & TW_STATUS_MASK);
+    switch (I2c->I2cState)
+    {
+    case I2C_STATE_START_W:
+        if (i2cStatus != TW_START)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            I2c->I2cState = I2C_STATE_ADDR_W;
+            TWDR = I2c->Address & ~0x01;
+            TWCR = (1 << TWINT) | (1 << TWEN);
+        }
+        break;
+
+    case I2C_STATE_ADDR_W:
+        if (i2cStatus != TW_MT_SLA_ACK)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            if (RingbufferRead(I2c->WBuffer, &dataByte))
+            {
+                I2c->I2cState = I2C_STATE_BYTE_W;
+                TWDR = dataByte;
+                TWCR = (1 << TWINT) | (1 << TWEN);
+            }
+            else
+            {
+                I2cStop();
+                I2c->I2cState = I2C_STATE_FINISHED;
+            }
+        }
+        break;
+
+    case I2C_STATE_BYTE_W:
+        if (i2cStatus != TW_MT_DATA_ACK)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            if (RingbufferRead(I2c->WBuffer, &dataByte))
+            {
+                I2c->I2cState = I2C_STATE_BYTE_W;
+                TWDR = dataByte;
+                TWCR = (1 << TWINT) | (1 << TWEN);
+            }
+            else
+            {
+                I2cStop();
+                I2c->I2cState = I2C_STATE_FINISHED;
+            }
+        }
+        break;
+
+    default:
+        break;
+    }
 }

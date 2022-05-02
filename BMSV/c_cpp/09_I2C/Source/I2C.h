@@ -17,11 +17,12 @@
 typedef enum
 {
     I2C_STATE_IDLE,
-    I2C_STATE_START,
+    I2C_STATE_START_W,
     I2C_STATE_STOP,
     I2C_STATE_FINISHED,
     I2C_STATE_ADDR_W,
-    I2C_STATE_BYTE_W
+    I2C_STATE_BYTE_W,
+    I2C_STATE_ERROR
 } TI2cState;
 
 typedef struct TI2cStruct *TI2c;
@@ -73,5 +74,12 @@ TI2cState I2cGetState(TI2c aI2c);
  * @return Void
  *******************************************************************************/
 void I2cDone(void);
+
+/*******************************************************************************
+ * Description
+ * @param void
+ * @return void
+ *******************************************************************************/
+void I2cStop(void);
 
 #endif
