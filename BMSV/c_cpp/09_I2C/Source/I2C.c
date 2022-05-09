@@ -24,12 +24,20 @@
 /*******************************************************************************
  * Structure of the I2C Bus Object
  * @param I2cState: Current state of the I2C Bus
+ * @param WBuffer: Buffer that contains the bytes to wrtie
+ * @param Address: Address of the slave
+ * @param *RBuffer: Buffer to which the read bytes are written
+ * @param NoOfBytesToRead: Number of Bytes to read
+ * @param ReadBytes: Number of bytes currently read
  *******************************************************************************/
 struct TI2cStruct
 {
     TI2cState I2cState;
     TRingBuffer WBuffer;
     unsigned char Address;
+    unsigned char *RBuffer;
+    unsigned char NoOfBytesToRead;
+    unsigned char ReadBytes;
 };
 
 // Private Variables
@@ -221,6 +229,80 @@ ISR(TWI_vect)
                 I2cStop();
                 I2c->I2cState = I2C_STATE_FINISHED;
             }
+        }
+        break;
+
+    case I2C_STATE_START_R:
+        if (i2cStatus != TW_START)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            I2c->I2cState = I2C_STATE_ADDR_R;
+            TWDR = I2c->Address & ~0x01;
+            TWCR = (1 << TWINT) | (1 << TWEN);
+        }
+        break;
+
+    case I2C_STATE_ADDR_R:
+        if (i2cStatus != TW_MR_SLA_ACK)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            dataByte = TWDR;
+            if (RingbufferWrite(I2c->RBuffer, dataByte))
+            {
+                I2c->I2cState = I2C_STATE_BYTE_R;
+                TWCR = (1 << TWINT) | (1 << TWEN);
+            }
+            else //! ??????
+            {
+                I2cStop();
+                I2c->I2cState = I2C_STATE_FINISHED;
+            }
+        }
+        break;
+
+    case I2C_STATE_BYTE_R:
+        if (i2cStatus != TW_MR_DATA_ACK)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
+            {
+                dataByte = TWDR;
+                if (RingbufferWrite(I2c->RBuffer, dataByte))
+                {
+                    I2c->I2cState = I2C_STATE_BYTE_R;
+                    TWCR = (1 << TWINT) | (1 << TWEN);
+                }
+                else //! ??????
+                {
+                    I2cStop();
+                    I2c->I2cState = I2C_STATE_FINISHED;
+                }
+            }
+            else
+            {
+                I2c->I2cState = I2C_STATE_FINAL_BYTE_R;
+            }
+        }
+        break;
+
+    case I2C_STATE_FINAL_BYTE_R:
+        if (i2cStatus != TW_MR_DATA_NACK)
+        {
+            I2c->I2cState = I2C_STATE_ERROR;
+        }
+        else
+        {
+            I2cStop();
+            I2c->I2cState = I2C_STATE_FINISHED;
         }
         break;
 
