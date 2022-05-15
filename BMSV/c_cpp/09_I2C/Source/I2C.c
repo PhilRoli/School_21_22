@@ -177,6 +177,7 @@ ISR(TWI_vect)
     i2cStatus = (TWSR & TW_STATUS_MASK);
     switch (I2c->I2cState)
     {
+        /******************************** WRITE ********************************/
     case I2C_STATE_START_W:
         if (i2cStatus != TW_START)
         {
@@ -231,7 +232,7 @@ ISR(TWI_vect)
             }
         }
         break;
-
+        /******************************** READ ********************************/
     case I2C_STATE_START_R:
         if (i2cStatus != TW_START)
         {
@@ -252,13 +253,13 @@ ISR(TWI_vect)
         }
         else
         {
-            dataByte = TWDR;
-            if (RingbufferWrite(I2c->RBuffer, dataByte))
+            if (RingbufferWrite(I2c->RBuffer, TWDR))
             {
                 I2c->I2cState = I2C_STATE_BYTE_R;
+                // Byte was read in RingbufferWrite(I2c->RBuffer, TWDR)
                 TWCR = (1 << TWINT) | (1 << TWEN);
             }
-            else //! ??????
+            else
             {
                 I2cStop();
                 I2c->I2cState = I2C_STATE_FINISHED;
@@ -273,15 +274,17 @@ ISR(TWI_vect)
         }
         else
         {
+            // Read bytes until only final one left
             if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
             {
-                dataByte = TWDR;
-                if (RingbufferWrite(I2c->RBuffer, dataByte))
+                if (RingbufferWrite(I2c->RBuffer, TWDR))
                 {
                     I2c->I2cState = I2C_STATE_BYTE_R;
+                    // Byte was read in RingbufferWrite(I2c->RBuffer, TWDR)
                     TWCR = (1 << TWINT) | (1 << TWEN);
+                    I2c->ReadBytes++;
                 }
-                else //! ??????
+                else
                 {
                     I2cStop();
                     I2c->I2cState = I2C_STATE_FINISHED;
@@ -289,7 +292,19 @@ ISR(TWI_vect)
             }
             else
             {
-                I2c->I2cState = I2C_STATE_FINAL_BYTE_R;
+                // read final byte
+                if (RingbufferWrite(I2c->RBuffer, TWDR))
+                {
+                    I2c->I2cState = I2C_STATE_FINAL_BYTE_R;
+                    // Byte was read in RingbufferWrite(I2c->RBuffer, TWDR)
+                    TWCR = (1 << TWINT) | (1 << TWEN);
+                    I2c->ReadBytes++;
+                }
+                else
+                {
+                    I2cStop();
+                    I2c->I2cState = I2C_STATE_FINISHED;
+                }
             }
         }
         break;
