@@ -66,10 +66,12 @@ TBool I2cInit(
     }
 
     I2c->WBuffer = RingbufferCreate(MAX_BUFFER_SIZE + 1);
-    if (I2c->WBuffer)
+    if (!I2c->WBuffer)
     {
-        I2c->I2cState = I2C_STATE_IDLE;
+        return EFALSE;
     }
+    I2c->I2cState = I2C_STATE_IDLE;
+
     // Set bitrate -> TWBT register
     // Set Prescaler -> TWSR register
     // Array - highest -> lowest
@@ -95,7 +97,7 @@ TBool I2cInit(
  * @param aSlaveAddress: Address of the I2C Bus Slave
  * @param *aBuffer: Data Buffer
  * @param aBufferSize: Size of the Data Buffer
- * @return xxx
+ * @return ETRUE if successful, EFALSE on error
  *******************************************************************************/
 TBool I2cWrite(
     unsigned char aSlaveAddress,
@@ -116,6 +118,7 @@ TBool I2cWrite(
     I2c->Address = aSlaveAddress;
     I2c->I2cState = I2C_STATE_START_W;
     TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
+    return ETRUE;
 }
 
 /*******************************************************************************
@@ -123,19 +126,26 @@ TBool I2cWrite(
  * @param aSlaveAddress: Address of the I2C Bus Slave
  * @param *aBuffer: Data Buffer
  * @param aNoOfBytes: Number of bytes to read
- * @return xxx
+ * @return ETRUE if successful, EFALSE on error
  *******************************************************************************/
 TBool I2cRead(
     unsigned char aSlaveAddress,
     unsigned char *aBuffer,
     unsigned char aNoOfBytes)
 {
+    I2c->RBuffer = aBuffer;
+    I2c->NoOfBytesToRead = aNoOfBytes;
+    I2c->Address = aSlaveAddress;
+
+    I2c->I2cState = I2C_STATE_START_R;
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
+    return ETRUE;
 }
 
 /*******************************************************************************
  * Description
  * @param aI2c: I2C Bus Object
- * @return xxx
+ * @return TI2cState: State of the I2C Bus
  *******************************************************************************/
 TI2cState I2cGetState(TI2c aI2c)
 {
@@ -241,7 +251,7 @@ ISR(TWI_vect)
         else
         {
             I2c->I2cState = I2C_STATE_ADDR_R;
-            TWDR = I2c->Address & ~0x01;
+            TWDR = I2c->Address |= 0x01;
             TWCR = (1 << TWINT) | (1 << TWEN);
         }
         break;
@@ -253,11 +263,16 @@ ISR(TWI_vect)
         }
         else
         {
+            if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
+            {
+                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA);
+            }
             if (RingbufferWrite(I2c->RBuffer, TWDR))
             {
                 I2c->I2cState = I2C_STATE_BYTE_R;
                 // Byte was read in RingbufferWrite(I2c->RBuffer, TWDR)
                 TWCR = (1 << TWINT) | (1 << TWEN);
+                I2c->ReadBytes++;
             }
             else
             {
@@ -295,7 +310,7 @@ ISR(TWI_vect)
                 // read final byte
                 if (RingbufferWrite(I2c->RBuffer, TWDR))
                 {
-                    I2c->I2cState = I2C_STATE_FINAL_BYTE_R;
+                    I2c->I2cState = I2C_STATE_BYTE_R_LAST;
                     // Byte was read in RingbufferWrite(I2c->RBuffer, TWDR)
                     TWCR = (1 << TWINT) | (1 << TWEN);
                     I2c->ReadBytes++;
@@ -309,7 +324,7 @@ ISR(TWI_vect)
         }
         break;
 
-    case I2C_STATE_FINAL_BYTE_R:
+    case I2C_STATE_BYTE_R_LAST:
         if (i2cStatus != TW_MR_DATA_NACK)
         {
             I2c->I2cState = I2C_STATE_ERROR;

@@ -16,7 +16,11 @@
 
 int main(void)
 {
+    unsigned char buffer[3];
+
     I2cInit(F_CPU, 100000UL);
+
+    I2cRead(0x20, buffer, 3);
     while (1)
     {
     }

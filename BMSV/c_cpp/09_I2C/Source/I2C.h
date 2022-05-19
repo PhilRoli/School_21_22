@@ -18,15 +18,15 @@ typedef enum
 {
     I2C_STATE_IDLE,
     I2C_STATE_START_W,
-    I2C_STATE_START_R,
-    I2C_STATE_STOP,
-    I2C_STATE_FINISHED,
     I2C_STATE_ADDR_W,
-    I2C_STATE_ADDR_R,
     I2C_STATE_BYTE_W,
+    I2C_STATE_START_R,
+    I2C_STATE_ADDR_R,
     I2C_STATE_BYTE_R,
-    I2C_STATE_FINAL_BYTE_R,
-    I2C_STATE_ERROR
+    I2C_STATE_BYTE_R_LAST,
+    I2C_STATE_ERROR,
+    I2C_STATE_STOP,
+    I2C_STATE_FINISHED
 } TI2cState;
 
 typedef struct TI2cStruct *TI2c;
@@ -46,7 +46,7 @@ TBool I2cInit(
  * @param aSlaveAddress: Address of the I2C Bus Slave
  * @param *aBuffer: Data Buffer
  * @param aBufferSize: Size of the Data Buffer
- * @return TBool if action was successful
+ * @return ETRUE if successful, EFALSE on error
  *******************************************************************************/
 TBool I2cWrite(
     unsigned char aSlaveAddress,
@@ -58,7 +58,7 @@ TBool I2cWrite(
  * @param aSlaveAddress: Address of the I2C Bus Slave
  * @param *aBuffer: Data Buffer
  * @param aNoOfBytes: Number of bytes to read
- * @return TBool if action was successful
+ * @return ETRUE if successful, EFALSE on error
  *******************************************************************************/
 TBool I2cRead(
     unsigned char aSlaveAddress,
