@@ -271,72 +271,6 @@ def printThree(text):
     return returntext
 
 
-def codoiertToCodogen(codiert):
-    # codiert -> codogen
-    codogen = str()
-    for c in codiert:
-        if c == "A":
-            codogen += "T"
-        if c == "T":
-            codogen += "A"
-        if c == "G":
-            codogen += "C"
-        if c == "C":
-            codogen += "G"
-        if c == " ":
-            pass
-    return codogen
-
-
-def codogenToMrna(codogen):
-    # codogen -> mRNA
-    mrna = str()
-    for c in codogen:
-        if c == "A":
-            mrna += "U"
-        if c == "T":
-            mrna += "A"
-        if c == "G":
-            mrna += "C"
-        if c == "C":
-            mrna += "G"
-        if c == " ":
-            pass
-    return mrna
-
-
-def mRnaToCodogen(mrna):
-    # mrna -> codogen
-    codogen = str()
-    for c in mrna:
-        if c == "A":
-            codogen += "T"
-        if c == "U":
-            codogen += "A"
-        if c == "G":
-            codogen += "C"
-        if c == "C":
-            codogen += "G"
-        if c == " ":
-            pass
-    return codogen
-
-
-def mrnaToTrna(mrna):
-    # mRNA -> tRNA
-    trna = str()
-    for c in mrna:
-        if c == "A":
-            trna += "U"
-        if c == "U":
-            trna += "A"
-        if c == "G":
-            trna += "C"
-        if c == "C":
-            trna += "G"
-    return trna
-
-
 def eliminateSpaces(input):
     returnStr = str()
     for c in input:
@@ -353,6 +287,53 @@ def findTTAG(codiert=str()):
     return ttagStr
 
 
+def rnaSwitcher(inputString):
+    # A = U / C = G
+    returnString = str()
+    for c in inputString:
+        if c == "A":
+            returnString += "U"
+        if c == "U":
+            returnString += "A"
+        if c == "G":
+            returnString += "C"
+        if c == "C":
+            returnString += "G"
+    return returnString
+
+
+def dnaSwitcher(inputString):
+    # A = T / C = G
+    returnString = str()
+    for c in inputString:
+        if c == "A":
+            returnString += "T"
+        if c == "T":
+            returnString += "A"
+        if c == "G":
+            returnString += "C"
+        if c == "C":
+            returnString += "G"
+    return returnString
+
+
+def dnarnaSwitcher(inputString):
+    # T = U / same
+    returnString = str()
+    for c in inputString:
+        if c == "T":
+            returnString += "U"
+        if c == "U":
+            returnString += "T"
+        if c != "T" and c != "U":
+            returnString += c
+    return returnString
+
+
+def inputSanitizer(statement):
+    return eliminateSpaces(input(statement).upper())
+
+
 # main
 print("Start Value")
 print("Codiert = 1")
@@ -360,45 +341,52 @@ print("Codogen = 2")
 print("mRNA    = 3")
 print("tRNA    = 4")
 print("TTAGcod = 5")
+print("Sonne   = 6")
 selection = input("Selct: ")
 print(" ")
 match selection:
     case "1":
         valid_input = 1
-        globCodiert = eliminateSpaces(input("Codiert: "))
-        globCodogen = codoiertToCodogen(globCodiert)
-        globMrna = codogenToMrna(globCodogen)
-        globTrna = mrnaToTrna(globMrna)
+        globCodiert = inputSanitizer("Codiert: ")
+        globCodogen = dnaSwitcher(globCodiert)
+        globMrna = dnarnaSwitcher(globCodogen)
+        globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "2":
         valid_input = 1
-        globCodogen = eliminateSpaces(input("Codogen: "))
-        globCodiert = codoiertToCodogen(globCodogen)
-        globMrna = codogenToMrna(globCodogen)
-        globTrna = mrnaToTrna(globMrna)
+        globCodogen = inputSanitizer("Codogen: ")
+        globCodiert = dnaSwitcher(globCodogen)
+        globMrna = dnarnaSwitcher(globCodogen)
+        globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "3":
         valid_input = 1
-        globMrna = eliminateSpaces(input("mRNA: "))
-        globCodogen = mRnaToCodogen(globMrna)
-        globCodiert = codoiertToCodogen(globCodogen)
-        globTrna = mrnaToTrna(globMrna)
+        globMrna = inputSanitizer("mRNA: ")
+        globCodogen = dnarnaSwitcher(globMrna)
+        globCodiert = dnaSwitcher(globCodogen)
+        globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "4":
         valid_input = 1
-        globTrna = eliminateSpaces(input("tRNA: "))
-        globMrna = mrnaToTrna(globTrna)
-        globCodogen = mRnaToCodogen(globMrna)
-        globCodiert = codoiertToCodogen(globCodogen)
+        globTrna = inputSanitizer("tRNA: ")
+        globMrna = rnaSwitcher(globTrna)
+        globCodogen = dnarnaSwitcher(globMrna)
+        globCodiert = dnaSwitcher(globCodogen)
         globCodesonneStr = getCodesonne(globMrna)
     case "5":
         valid_input = 1
-        globCodiert = eliminateSpaces(input("Codiert: "))
+        globCodiert = inputSanitizer("Codiert: ")
         globCodiert = findTTAG(globCodiert)
-        globCodogen = codoiertToCodogen(globCodiert)
-        globMrna = codogenToMrna(globCodogen)
-        globTrna = mrnaToTrna(globMrna)
+        globCodogen = dnaSwitcher(globCodiert)
+        globMrna = dnarnaSwitcher(globCodogen)
+        globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
+    case "6":
+        valid_input = 0
+        globCodesonneStr = inputSanitizer("Sonne: ")
+        print(" ")
+        print("Sonne  : " + printThree(globCodesonneStr))
+        print("Saeuren: " + printSequezierung(globCodesonneStr))
     case _:
         print("Invalid Input!")
 
