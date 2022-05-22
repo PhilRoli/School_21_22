@@ -1,4 +1,3 @@
-# TODO: mRNA = tRNA output
 
 #! Nicht Mutiert:
 # CCTATTGGTCTATTTTCCACCCTTAGGCTGCT
@@ -7,13 +6,13 @@
 #! Codogen:
 # CGA CGA
 #! mRNA:
-# CGA CGA
-#! tRNA:
 # GCU GCU
+#! tRNA:
+# CGA CGA
 #! Sonne:
-# ARG ARG
+# ALA ALA
 #! Aminosaeuren:
-# Arginin Arginin
+# Alanin Alanin
 
 #! Mutiert:
 # CCTATTAGTCTATTTTCCACCCTTAGGCTGCT
@@ -349,36 +348,36 @@ match selection:
         valid_input = 1
         globCodiert = inputSanitizer("Codiert: ")
         globCodogen = dnaSwitcher(globCodiert)
-        globMrna = dnarnaSwitcher(globCodogen)
+        globMrna = dnarnaSwitcher(globCodiert)
         globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "2":
         valid_input = 1
         globCodogen = inputSanitizer("Codogen: ")
         globCodiert = dnaSwitcher(globCodogen)
-        globMrna = dnarnaSwitcher(globCodogen)
+        globMrna = dnarnaSwitcher(globCodiert)
         globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "3":
         valid_input = 1
         globMrna = inputSanitizer("mRNA: ")
-        globCodogen = dnarnaSwitcher(globMrna)
-        globCodiert = dnaSwitcher(globCodogen)
+        globCodiert = dnarnaSwitcher(globMrna)
+        globCodogen = dnaSwitcher(globCodiert)
         globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "4":
         valid_input = 1
         globTrna = inputSanitizer("tRNA: ")
         globMrna = rnaSwitcher(globTrna)
-        globCodogen = dnarnaSwitcher(globMrna)
-        globCodiert = dnaSwitcher(globCodogen)
+        globCodiert = dnarnaSwitcher(globMrna)
+        globCodogen = dnaSwitcher(globCodiert)
         globCodesonneStr = getCodesonne(globMrna)
     case "5":
         valid_input = 1
         globCodiert = inputSanitizer("Codiert: ")
         globCodiert = findTTAG(globCodiert)
         globCodogen = dnaSwitcher(globCodiert)
-        globMrna = dnarnaSwitcher(globCodogen)
+        globMrna = dnarnaSwitcher(globCodiert)
         globTrna = rnaSwitcher(globMrna)
         globCodesonneStr = getCodesonne(globMrna)
     case "6":
