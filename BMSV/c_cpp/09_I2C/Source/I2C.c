@@ -115,6 +115,7 @@ TBool I2cWrite(
             return EFALSE;
         }
     }
+    // Transfer slave adress and start state into I2c Object
     I2c->Address = aSlaveAddress;
     I2c->I2cState = I2C_STATE_START_W;
     TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN);
@@ -122,7 +123,7 @@ TBool I2cWrite(
 }
 
 /*******************************************************************************
- * Description
+ * Function to read Data from the I2C Bus
  * @param aSlaveAddress: Address of the I2C Bus Slave
  * @param *aBuffer: Data Buffer
  * @param aNoOfBytes: Number of bytes to read
@@ -133,6 +134,7 @@ TBool I2cRead(
     unsigned char *aBuffer,
     unsigned char aNoOfBytes)
 {
+    // Transfer Buffer, Number of bytes to read and slave adress into I2c object
     I2c->RBuffer = aBuffer;
     I2c->NoOfBytesToRead = aNoOfBytes;
     I2c->Address = aSlaveAddress;
@@ -149,6 +151,7 @@ TBool I2cRead(
  *******************************************************************************/
 TI2cState I2cGetState(TI2c aI2c)
 {
+    // TODO
 }
 
 /*******************************************************************************
@@ -158,10 +161,11 @@ TI2cState I2cGetState(TI2c aI2c)
  *******************************************************************************/
 void I2cDone(void)
 {
+    // TODO
 }
 
 /*******************************************************************************
- * Description
+ * Function to Stop the I2C Connection
  * @param void
  * @return void
  *******************************************************************************/
@@ -195,6 +199,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Write Slave Adress
             I2c->I2cState = I2C_STATE_ADDR_W;
             TWDR = I2c->Address & ~0x01;
             TWCR = (1 << TWINT) | (1 << TWEN);
@@ -208,6 +213,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Write First Byte
             if (RingbufferRead(I2c->WBuffer, &dataByte))
             {
                 I2c->I2cState = I2C_STATE_BYTE_W;
@@ -229,6 +235,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Write Bytes to I2C Connection until Buffer is empty
             if (RingbufferRead(I2c->WBuffer, &dataByte))
             {
                 I2c->I2cState = I2C_STATE_BYTE_W;
@@ -250,6 +257,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Write Slave Adress
             I2c->I2cState = I2C_STATE_ADDR_R;
             TWDR = I2c->Address |= 0x01;
             TWCR = (1 << TWINT) | (1 << TWEN);
@@ -263,6 +271,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Read First Byte
             if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
             {
                 TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA);
@@ -331,6 +340,7 @@ ISR(TWI_vect)
         }
         else
         {
+            // Last Byte was read -> Finished
             I2cStop();
             I2c->I2cState = I2C_STATE_FINISHED;
         }
