@@ -23,7 +23,7 @@
  * @param I2C_STATE_START_R: Start Read Process
  * @param I2C_STATE_ADDR_R: Write Slave Adress for Read Process
  * @param I2C_STATE_BYTE_R: Read Bytes from I2C Connection
- * @param I2C_STATE_BYTE_R_LAST: Read Last Byte
+ * @param I2C_STATE_BYTE_LAST_R: Read Last Byte
  * @param I2C_STATE_ERROR: Error State
  * @param I2C_STATE_STOP: Stop I2C Connection
  * @param I2C_STATE_FINISHED: Transmission Finished
@@ -37,7 +37,7 @@ typedef enum
     I2C_STATE_START_R,
     I2C_STATE_ADDR_R,
     I2C_STATE_BYTE_R,
-    I2C_STATE_BYTE_R_LAST,
+    I2C_STATE_BYTE_LAST_R,
     I2C_STATE_ERROR,
     I2C_STATE_STOP,
     I2C_STATE_FINISHED
@@ -80,11 +80,11 @@ TBool I2cRead(
     unsigned char aNoOfBytes);
 
 /*******************************************************************************
- * Description
- * @param aI2c: I2C Bus Object
+ * Returns I2C Connection State
+ * @param void
  * @return TI2cState: State of the I2C Bus
  *******************************************************************************/
-TI2cState I2cGetState(TI2c aI2c);
+TI2cState I2cGetState(void);
 
 /*******************************************************************************
  * Description
