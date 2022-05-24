@@ -118,7 +118,7 @@ TBool I2cWrite(
     // Transfer slave adress and start state into I2c Object
     I2c->Address = aSlaveAddress;
     I2c->I2cState = I2C_STATE_START_W;
-    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN) | (1 < TWIE);
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN) | (1 << TWIE);
     return ETRUE;
 }
 
@@ -141,7 +141,7 @@ TBool I2cRead(
     I2c->Address = aSlaveAddress;
 
     I2c->I2cState = I2C_STATE_START_R;
-    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN) | (1 < TWIE);
+    TWCR = (1 << TWINT) | (1 << TWSTA) | (1 << TWEN) | (1 << TWIE);
     return ETRUE;
 }
 
@@ -174,7 +174,7 @@ void I2cStop(void)
 {
     volatile unsigned int counter;
     unsigned char pins = (1 << SDA_PIN) | (1 << SCL_PIN);
-    TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN) | (1 < TWIE);
+    TWCR = (1 << TWINT) | (1 << TWSTO) | (1 << TWEN) | (1 << TWIE);
     for (counter = 0; counter < 100; counter++)
     {
         if ((TWI_PIN_PORT & pins) == pins)
@@ -203,7 +203,7 @@ ISR(TWI_vect)
             // Write Slave Adress
             I2c->I2cState = I2C_STATE_ADDR_W;
             TWDR = I2c->Address & ~0x01;
-            TWCR = (1 << TWINT) | (1 << TWEN) | (1 < TWIE);
+            TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWIE);
         }
         break;
 
@@ -219,7 +219,7 @@ ISR(TWI_vect)
             {
                 I2c->I2cState = I2C_STATE_BYTE_W;
                 TWDR = dataByte;
-                TWCR = (1 << TWINT) | (1 << TWEN) | (1 < TWIE);
+                TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWIE);
             }
             else
             {
@@ -241,7 +241,7 @@ ISR(TWI_vect)
             {
                 I2c->I2cState = I2C_STATE_BYTE_W;
                 TWDR = dataByte;
-                TWCR = (1 << TWINT) | (1 << TWEN) | (1 < TWIE);
+                TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWIE);
             }
             else
             {
@@ -261,7 +261,7 @@ ISR(TWI_vect)
             // Write Slave Adress
             I2c->I2cState = I2C_STATE_ADDR_R;
             TWDR = I2c->Address |= 0x01;
-            TWCR = (1 << TWINT) | (1 << TWEN) | (1 < TWIE);
+            TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWIE);
         }
         break;
 
@@ -276,12 +276,12 @@ ISR(TWI_vect)
             if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
             {
                 I2c->I2cState = I2C_STATE_BYTE_R;
-                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA) | (1 < TWIE);
+                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA) | (1 << TWIE);
             }
             else
             {
                 I2c->I2cState = I2C_STATE_BYTE_LAST_R;
-                TWCR = (1 < TWINT) | (1 << TWEN) | (1 < TWIE);
+                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWIE);
             }
         }
         break;
@@ -297,12 +297,12 @@ ISR(TWI_vect)
             if (I2c->ReadBytes < I2c->NoOfBytesToRead - 1)
             {
                 I2c->I2cState = I2C_STATE_BYTE_R;
-                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA) | (1 < TWIE);
+                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWEA) | (1 << TWIE);
             }
             else
             {
                 I2c->I2cState = I2C_STATE_BYTE_LAST_R;
-                TWCR = (1 < TWINT) | (1 << TWEN) | (1 < TWIE);
+                TWCR = (1 < TWINT) | (1 << TWEN) | (1 << TWIE);
             }
         }
         break;
