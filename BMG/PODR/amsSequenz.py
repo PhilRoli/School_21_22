@@ -44,6 +44,18 @@ globSaeureStr = str()
 valid_input = 0
 
 
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKCYAN = '\033[96m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
+
 def codesonne(sequenz):
     match sequenz:
         case "UUU":
@@ -223,7 +235,7 @@ def sequenzierung(codesonnecode):
         case "STP":
             return "STOP"
         case _:
-            return "ERR"
+            return "ERROR"
 
 
 def getCodesonne(mrnaString):
@@ -251,7 +263,20 @@ def printSequezierung(codeString):
             seqString += c
             i += 1
             if i == 3:
-                returnString += sequenzierung(seqString)
+                if seqString == "STP":
+                    returnString += bcolors.FAIL
+                    returnString += bcolors.BOLD
+                    returnString += bcolors.UNDERLINE
+                    returnString += sequenzierung(seqString)
+                    returnString += bcolors.ENDC
+                elif seqString == "ERR":
+                    returnString += bcolors.WARNING
+                    returnString += bcolors.BOLD
+                    returnString += bcolors.UNDERLINE
+                    returnString += sequenzierung(seqString)
+                    returnString += bcolors.ENDC
+                else:
+                    returnString += sequenzierung(seqString)
                 returnString += " "
                 seqString = ""
                 i = 0
